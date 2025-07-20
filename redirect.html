@@ -1,0 +1,23 @@
+<!-- redirect.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    const code = window.location.pathname.replace("/", "");
+    fetch("https://urlshortner.online/api/resolve.php?code=" + code)
+      .then(res => res.json())
+      .then(data => {
+        if (data.target) {
+          window.location.href = data.target;
+        } else {
+          document.body.innerText = "❌ Invalid short code.";
+        }
+      });
+  </script>
+</head>
+<body>
+  <p>⏳ Redirecting...</p>
+</body>
+</html>
