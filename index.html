@@ -2,20 +2,133 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <title>Link Shortener</title>
+  <title>🔗 Link Shortener</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
-  <script defer src="script.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 22px;
+      color: #007bff;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #guestResult input {
+      margin-top: 12px;
+    }
+
+    #guestMsg {
+      margin-top: 10px;
+      color: green;
+      font-weight: bold;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+
+  <script>
+    async function guestShorten() {
+      const longUrl = document.getElementById("guestLongUrl").value.trim();
+      if (!longUrl) return alert("⚠️ লিংক দিন");
+
+      try {
+        const res = await fetch("https://urlshortner.online/api/shorten.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ longUrl })
+        });
+
+        const data = await res.json();
+
+        if (data.shortUrl) {
+          document.getElementById("guestShortUrl").value = data.shortUrl;
+          document.getElementById("guestResult").style.display = "block";
+          document.getElementById("guestMsg").innerText = "✅ শর্ট লিংক তৈরি হয়েছে!";
+        } else {
+          document.getElementById("guestMsg").innerText = "❌ সমস্যা: " + data.error;
+        }
+      } catch (err) {
+        document.getElementById("guestMsg").innerText = "❌ নেটওয়ার্ক সমস্যা: আবার চেষ্টা করুন";
+      }
+    }
+
+    function guestCopy() {
+      const input = document.getElementById("guestShortUrl");
+      input.select(); document.execCommand("copy");
+      document.getElementById("guestMsg").innerText = "📋 কপি হয়ে গেছে!";
+    }
+  </script>
 </head>
+
 <body>
 
-  <div class="container fade-in">
+  <div class="container">
     <h2>🔗 শর্ট লিংক তৈরি করুন</h2>
 
-    <input type="text" id="guestLongUrl" placeholder="এখানে লিংক দিন" required>
+    <input type="text" id="guestLongUrl" placeholder="এখানে আপনার লিংক দিন" required>
     <button onclick="guestShorten()">Short করুন</button>
 
-    <div id="guestResult" style="margin-top:10px; display:none;">
+    <div id="guestResult" style="display:none;">
       <input type="text" id="guestShortUrl" readonly>
       <button onclick="guestCopy()">📋 কপি করুন</button>
       <p id="guestMsg"></p>
