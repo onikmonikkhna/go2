@@ -1,20 +1,17 @@
-<!-- redirect.html -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Redirecting...</title>
+  <title>🔗 Redirecting...</title>
   <script>
-    const code = window.location.pathname.replace("/", "");
-    fetch("https://urlshortner.online/api/resolve.php?code=" + code)
+    const code = decodeURIComponent(window.location.pathname.replace("/", ""));
+    fetch("https://your-backend-domain.com/api/resolve.php?code=" + code)
       .then(res => res.json())
       .then(data => {
-        if (data.target) {
-          window.location.href = data.target;
-        } else {
-          document.body.innerText = "❌ Invalid short code.";
-        }
-      });
+        if (data.target) window.location.href = data.target;
+        else document.body.innerText = "❌ Invalid short code";
+      })
+      .catch(() => document.body.innerText = "❌ Network error");
   </script>
 </head>
 <body>
